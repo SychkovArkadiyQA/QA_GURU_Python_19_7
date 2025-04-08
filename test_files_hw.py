@@ -8,6 +8,7 @@ from selenium import webdriver
 from selene import browser
 from pypdf import PdfReader
 from openpyxl import load_workbook
+from io import TextIOWrapper
 
 
 CURRENT_FILE = os.path.abspath(__file__) # получаем абсолютный путь к текущему файлу
@@ -31,3 +32,12 @@ def test_create_zip():
             zf.write(file_path, file)
 
 # TODO Реализовать чтение и проверку содержимого каждого файла из архива не распаковывая сам архив;
+
+def test_csv():
+    archive_path = os.path.join(ZIP_DIR, 'archive.zip')
+    with zipfile.ZipFile(archive_path) as zip_file:
+        with zip_file.open('CSV_for_test.csv') as csv_file:
+            csvreader = list(csv.reader(TextIOWrapper(csv_file, 'utf-8-sig')))
+            print(csvreader)
+            assert csvreader == [['Anna', 'Pavel', 'Peter'],
+                                 ['Alex', 'Serj', 'Yana']]
